@@ -1,4 +1,4 @@
-# Molecular Dynamics Supervision Excercises 1
+# Molecular Dynamics Supervision Excercises 1 - Radial Distribution Functions
 
 import pandas as pd
 import numpy as np
@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # relevant functions
 
 def plot_config(config, box_L, title):
-    # 3D plot of the configuration
+    '''3D plot of the configuration'''
     fig = plt.figure(figsize = (10, 7))
     ax = plt.axes(projection = '3d')
     ax.scatter3D(config[:,0], config[:,1], config[:,2], color = 'green')
@@ -16,8 +16,8 @@ def plot_config(config, box_L, title):
     plt.show()
 
 def distances(config, box_size):
-    # calculate Euclidian distances between all pairs of particles
-    # store in numpy array
+    '''calculate Euclidian distances between all pairs of particles
+    and store in numpy array'''
     distance_list = []
     N_particles = config.shape[0]
     
@@ -38,13 +38,13 @@ def distances(config, box_size):
     return np.array(distance_list)
 
 def histogram_distances(distance_list, max_dist, bin_size):
-    # count how often a distance is between r and dr
+    '''count how often a distance is between r and dr'''
     bins = np.arange(0, max_dist + bin_size, bin_size)
     hist, bin_edges = np.histogram(distance_list, bins = bins)
     return hist, bin_edges
     
 def get_rdf(hist, bin_edges, num_particles, box_size):
-    # calculate RDF from histogram of distances
+    '''calculate RDF from histogram of distances'''
     density = num_particles / box_size**3 # scale by density
     bin_centres = (bin_edges[1:] + bin_edges[:-1]) / 2.0 # r
     dr = bin_edges[1] - bin_edges[0] # delta_r
@@ -140,3 +140,24 @@ set3_rdf, set3_bin_centres = get_rdf(set3_dist_hist, set3_bin_edges, num_particl
 plot_rdf(set3_rdf, set3_bin_centres, 'Set3 RDF')
 
 # Sets 2 and 3 belong to a crystal phase, seen by periodic sharp peaks in the RDF indicative of a ordered crystal structure. Set 1 is liquid phase.
+
+def coordination(bin_centres, rdf, num_particles, box_size):
+    '''return array of coordination number as a function of r '''
+    density = num_particles / box_size**3
+    z = 4 * np.pi * density * bin_centres**2 * rdf
+    return z
+
+def plot_coordination(coord_array, bin_centres, title):
+    ''' plot coordination number as a function of distance'''
+    plt.plot(bin_centres, coord_array, marker = 'o', markersize = 1)
+    plt.ylabel('Coordination Number')
+    plt.xlabel('r')
+    plt.title(title)
+    
+set1_coord = coordination(set1_bin_centres, set1_rdf, 2000, 1)
+set2_coord = coordination(set2_bin_centres, set2_rdf, 2000, 1)
+set3_coord = coordination(set3_bin_centres, set3_rdf, 4000, 1)
+
+plot_coordination(set1_coord, set1_bin_centres, 'Set 1 Coordination Number')
+plot_coordination(set2_coord, set2_bin_centres, 'Set 2 Coordination Number')
+plot_coordination(set3_coord, set3_bin_centres, 'Set 3 Coordination Number')
