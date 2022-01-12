@@ -63,6 +63,8 @@ def plot_rdf(rdf, bin_centres, title):
 
 
 # Excercise 2.1
+ideal_data = pd.read_csv('ideal_data.csv', names=['x', 'y', 'z'])
+ideal_config = ideal_data.to_numpy()
 
 box_L = 1 # scaled box size 
 num_particles = 2000
@@ -96,6 +98,15 @@ def OH_distances(ox_config, hyd_config, box_size):
             distance_list.append(distance)
     return np.array(distance_list)
 
+water_df = pd.read_csv('water_data.csv', names=['type', 'charge','x', 'y', 'z'])
+ox_df = water_df[water_df['type'] == 1] # DataFrame of only oxygen atoms
+hyd_df = water_df[water_df['type'] == 2] # DataFrame of only hydrogen atoms
+
+# create numpy arrays of all data and oxygen and hydrogen seperately
+water_array = water_df[['x', 'y', 'z']].to_numpy()
+ox_array = ox_df[['x', 'y', 'z']].to_numpy()
+hyd_array = hyd_df[['x', 'y', 'z']].to_numpy()
+
 # Oxygen-Oxygen RDF
 box_L = 1
 num_particles = 1500
@@ -117,6 +128,13 @@ plot_rdf(OH_rdf, OH_bin_centres, 'Oxygen-Hydrogen RDF')
 
 
 # Exercise 2.3
+set1_df = pd.read_csv('set1.csv', names=['x', 'y', 'z'])
+set2_df = pd.read_csv('set2.csv', names=['x', 'y', 'z'])
+set3_df = pd.read_csv('set3.csv', names=['x', 'y', 'z'])
+
+set1_config = set1_df.to_numpy()
+set2_config = set2_df.to_numpy()
+set3_config = set3_df.to_numpy()
 
 box_L = 1
 num_particles = 2000
